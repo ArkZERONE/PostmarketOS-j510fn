@@ -15,10 +15,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y \
-            python3 python3-pip python3-venv \
-            git curl wget \
-            e2fsprogs
+          sudo apt-get install -y python3 python3-pip python3-venv git curl wget e2fsprogs
 
       - name: Install pmbootstrap from git
         run: |
@@ -30,12 +27,7 @@ jobs:
 
       - name: Initialize pmbootstrap
         run: |
-          pmbootstrap -y init \
-            --device samsung-j5x \
-            --ui xfce4 \
-            --user user \
-            --hostname j5pmos \
-            --no-sshd
+          pmbootstrap -y init --device samsung-j5x --ui xfce4 --user user --no-sshd
 
       - name: Build kernel and packages
         run: |
