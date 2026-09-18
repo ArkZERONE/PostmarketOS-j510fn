@@ -48,6 +48,7 @@ jobs:
           nonfree_firmware = True
           nonfree_userland = True
           ssh_keys = False
+          sshd = False
           timezone = UTC
           ui = xfce4
           user = user
@@ -59,7 +60,7 @@ jobs:
 
       - name: Initialize pmbootstrap
         run: |
-          pmbootstrap -y init --details-to-stdout
+          pmbootstrap -y init
 
       - name: Build kernel and packages
         run: |
