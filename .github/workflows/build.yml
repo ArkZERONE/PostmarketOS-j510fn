@@ -20,11 +20,11 @@ jobs:
             git curl wget \
             e2fsprogs
 
-      - name: Install pmbootstrap from source
+      - name: Install pmbootstrap from git
         run: |
-          git clone --depth=1 https://gitlab.com/postmarketOS/pmbootstrap.git $HOME/pmbootstrap
-          cd $HOME/pmbootstrap
-          pip3 install --user -e .
+          git clone --depth=1 https://gitlab.postmarketos.org/postmarketOS/pmbootstrap.git
+          mkdir -p ~/.local/bin
+          ln -s "$PWD/pmbootstrap/pmbootstrap.py" ~/.local/bin/pmbootstrap
           echo "$HOME/.local/bin" >> $GITHUB_PATH
           pmbootstrap --version
 
@@ -49,9 +49,9 @@ jobs:
         run: |
           pmbootstrap -y export
           mkdir -p output
-          cp -L /tmp/postmarketOS-export/* output/ 2>/dev/null || true
+          cp -L /tmp/postmarketOS-export/boot.img output/boot.img 2>/dev/null || true
+          cp -L /tmp/postmarketOS-export/*.img output/ 2>/dev/null || true
           find ~/.local/var/pmbootstrap -type f -name "*.img" -exec cp -L {} output/ \; 2>/dev/null || true
-          find ~/.local/var/pmbootstrap -type f -name "*.tar.gz" -exec cp -L {} output/ \; 2>/dev/null || true
           echo "=== Files in output ==="
           ls -lh output/
 
