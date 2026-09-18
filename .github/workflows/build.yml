@@ -23,7 +23,9 @@ jobs:
       - name: Install pmbootstrap from source
         run: |
           git clone --depth=1 https://gitlab.com/postmarketOS/pmbootstrap.git $HOME/pmbootstrap
-          ln -s $HOME/pmbootstrap/pmbootstrap.py /usr/local/bin/pmbootstrap
+          cd $HOME/pmbootstrap
+          pip3 install --user -e .
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
           pmbootstrap --version
 
       - name: Initialize pmbootstrap
