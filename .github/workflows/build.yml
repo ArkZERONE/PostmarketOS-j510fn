@@ -18,16 +18,12 @@ jobs:
           sudo apt-get install -y \
             python3 python3-pip python3-venv \
             git curl wget \
-            android-tools-adb android-tools-fastboot \
             e2fsprogs
 
-      - name: Install pmbootstrap
+      - name: Install pmbootstrap from source
         run: |
-          pip3 install --user pmbootstrap
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-      - name: Verify pmbootstrap
-        run: |
+          git clone --depth=1 https://gitlab.com/postmarketOS/pmbootstrap.git $HOME/pmbootstrap
+          ln -s $HOME/pmbootstrap/pmbootstrap.py /usr/local/bin/pmbootstrap
           pmbootstrap --version
 
       - name: Initialize pmbootstrap
