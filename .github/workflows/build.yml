@@ -25,9 +25,17 @@ jobs:
           echo "$HOME/.local/bin" >> $GITHUB_PATH
           pmbootstrap --version
 
+      - name: Configure pmbootstrap
+        run: |
+          pmbootstrap -y config device samsung-j5x
+          pmbootstrap -y config ui xfce4
+          pmbootstrap -y config user user
+          pmbootstrap -y config hostname j5pmos
+          pmbootstrap -y config sshd false
+
       - name: Initialize pmbootstrap
         run: |
-          pmbootstrap -y init --device samsung-j5x --ui xfce4 --user user --no-sshd
+          pmbootstrap -y init
 
       - name: Build kernel and packages
         run: |
