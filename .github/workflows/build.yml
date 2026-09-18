@@ -30,33 +30,33 @@ jobs:
           mkdir -p $HOME/.local/var/pmbootstrap/cache_git
           git clone --depth=1 https://gitlab.postmarketos.org/postmarketOS/pmaports.git $HOME/.local/var/pmbootstrap/cache_git/pmaports
 
-      - name: Create pmbootstrap config
+      - name: Create pmbootstrap TOML config
         run: |
           mkdir -p $HOME/.config
-          cat << EOF > $HOME/.config/pmbootstrap.cfg
+          cat > $HOME/.config/pmbootstrap.toml << EOF
           [pmbootstrap]
-          aports = $HOME/.local/var/pmbootstrap/cache_git/pmaports
-          cachedir = $HOME/.local/var/pmbootstrap
-          device = samsung-j5x
+          aports = "/home/runner/.local/var/pmbootstrap/cache_git/pmaports"
+          cachedir = "/home/runner/.local/var/pmbootstrap"
+          device = "samsung-j5x"
           extra_space = 0
-          is_default_channel = True
+          is_default_channel = true
           jobs = 5
-          kernel = stable
-          keymap = us
-          locale = en_US.UTF-8
-          mirrors_alpine = http://dl-cdn.alpinelinux.org/alpine/
-          nonfree_firmware = True
-          nonfree_userland = True
-          ssh_keys = False
-          sshd = False
-          timezone = UTC
-          ui = xfce4
-          user = user
-          vendor = samsung
-          workdir = $HOME/.local/var/pmbootstrap
+          kernel = "stable"
+          keymap = "us"
+          locale = "en_US.UTF-8"
+          mirrors_alpine = "http://dl-cdn.alpinelinux.org/alpine/"
+          nonfree_firmware = true
+          nonfree_userland = true
+          ssh_keys = false
+          sshd = false
+          timezone = "UTC"
+          ui = "xfce4"
+          user = "user"
+          vendor = "samsung"
+          workdir = "/home/runner/.local/var/pmbootstrap"
           EOF
           echo "=== Config file ==="
-          cat $HOME/.config/pmbootstrap.cfg
+          cat $HOME/.config/pmbootstrap.toml
 
       - name: Initialize pmbootstrap
         run: |
