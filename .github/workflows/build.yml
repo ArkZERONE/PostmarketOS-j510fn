@@ -25,13 +25,32 @@ jobs:
           echo "$HOME/.local/bin" >> $GITHUB_PATH
           pmbootstrap --version
 
-      - name: Configure pmbootstrap
+      - name: Create pmbootstrap config
         run: |
-          pmbootstrap -y config device samsung-j5x
-          pmbootstrap -y config ui xfce4
-          pmbootstrap -y config user user
-          pmbootstrap -y config hostname j5pmos
-          pmbootstrap -y config sshd false
+          mkdir -p ~/.config
+          cat > ~/.config/pmbootstrap.cfg << 'EOF'
+          [pmbootstrap]
+          aports = "~/.local/var/pmbootstrap/cache_git/pmaports"
+          cachedir = "~/.local/var/pmbootstrap"
+          device = "samsung-j5x"
+          extra_space = "0"
+          is_default_channel = true
+          jobs = "5"
+          kernel = "stable"
+          keymap = "us"
+          locale = "en_US.UTF-8"
+          mirrors_alpine = "http://dl-cdn.alpinelinux.org/alpine/"
+          nonfree_firmware = true
+          nonfree_userland = true
+          ssh_keys = false
+          timezone = "UTC"
+          ui = "xfce4"
+          user = "user"
+          vendor = "samsung"
+          workdir = "~/.local/var/pmbootstrap"
+          EOF
+          echo "=== Config file ==="
+          cat ~/.config/pmbootstrap.cfg
 
       - name: Initialize pmbootstrap
         run: |
