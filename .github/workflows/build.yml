@@ -15,25 +15,19 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3 python3-pip python3-venv git curl wget e2fsprogs
+          sudo apt-get install -y python3 python3-pip python3-venv git curl wget e2fsprogs openssl
 
       - name: Install pmbootstrap from git
         run: |
           git clone --depth=1 https://gitlab.postmarketos.org/postmarketOS/pmbootstrap.git
-          mkdir -p $HOME/.local/bin
-          ln -sf "$PWD/pmbootstrap/pmbootstrap.py" $HOME/.local/bin/pmbootstrap
+          mkdir -p ~/.local/bin
+          ln -s "$PWD/pmbootstrap/pmbootstrap.py" ~/.local/bin/pmbootstrap
           echo "$HOME/.local/bin" >> $GITHUB_PATH
-          pmbootstrap --version
-
-      - name: Clone pmaports
-        run: |
-          mkdir -p $HOME/.local/var/pmbootstrap/cache_git
-          git clone --depth=1 https://gitlab.postmarketos.org/postmarketOS/pmaports.git $HOME/.local/var/pmbootstrap/cache_git/pmaports
 
       - name: Create pmbootstrap config
         run: |
-          mkdir -p $HOME/.config
-          cat << EOF > $HOME/.config/pmbootstrap.cfg
+          mkdir -p ~/.config
+          cat << EOF > ~/.config/pmbootstrap.cfg
           [pmbootstrap]
           aports = $HOME/.local/var/pmbootstrap/cache_git/pmaports
           cachedir = $HOME/.local/var/pmbootstrap
@@ -54,12 +48,12 @@ jobs:
           vendor = samsung
           workdir = $HOME/.local/var/pmbootstrap
           EOF
-          echo "=== Config file ==="
-          cat $HOME/.config/pmbootstrap.cfg
+          echo "=== Config file check ==="
+          cat ~/.config/pmbootstrap.cfg
 
       - name: Initialize pmbootstrap
         run: |
-          pmbootstrap -y init --details-to-stdout
+          pmbootstrap -y init
 
       - name: Build kernel and packages
         run: |
@@ -73,8 +67,9 @@ jobs:
         run: |
           pmbootstrap -y export
           mkdir -p output
+          cp -L /tmp/postmarketOS-export/boot.img output/boot.img 2>/dev/null || true
           cp -L /tmp/postmarketOS-export/*.img output/ 2>/dev/null || true
-          find $HOME/.local/var/pmbootstrap -type f -name "*.img" -exec cp -L {} output/ \; 2>/dev/null || true
+          find ~/.local/var/pmbootstrap -type f -name "*.img" -exec cp -L {} output/ \; 2>/dev/null || true
           echo "=== Files in output ==="
           ls -lh output/
 
