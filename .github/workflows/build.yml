@@ -1,0 +1,66 @@
+name: Build pmOS J5 2016
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            python3 python3-pip python3-venv \
+            git curl wget \
+            android-tools-adb android-tools-fastboot \
+            e2fsprogs
+
+      - name: Install pmbootstrap
+        run: |
+          pip3 install --user pmbootstrap
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Verify pmbootstrap
+        run: |
+          pmbootstrap --version
+
+      - name: Initialize pmbootstrap
+        run: |
+          pmbootstrap -y init \
+            --device samsung-j5x \
+            --ui xfce4 \
+            --user user \
+            --hostname j5pmos \
+            --no-sshd
+
+      - name: Build kernel and packages
+        run: |
+          pmbootstrap -y build --arch armv7
+
+      - name: Install rootfs
+        run: |
+          pmbootstrap -y install --split
+
+      - name: Export artifacts
+        run: |
+          pmbootstrap -y export
+          mkdir -p output
+          cp -L /tmp/postmarketOS-export/* output/ 2>/dev/null || true
+          find ~/.local/var/pmbootstrap -type f -name "*.img" -exec cp -L {} output/ \; 2>/dev/null || true
+          find ~/.local/var/pmbootstrap -type f -name "*.tar.gz" -exec cp -L {} output/ \; 2>/dev/null || true
+          echo "=== Files in output ==="
+          ls -lh output/
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: pmos-j5x-images
+          path: output/
+          retention-days: 7
+          if-no-files-found: warn
